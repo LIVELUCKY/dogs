@@ -1,7 +1,6 @@
-import 'dart:convert';
-
+import 'package:dogs/breed.dart';
+import 'package:dogs/providers.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
@@ -58,17 +57,29 @@ class _HomePageState extends State<HomePage> {
                         itemCount: aux.length,
                         itemBuilder: (BuildContext context, int index) {
                           String key = aux.keys.elementAt(index);
-                          return Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  title: Text(key),
-                                  subtitle: Text(
-                                    aux[key].toString().trim(),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BreedViewer(breed: key),
+                                  ));
+                            },
+                            child: Card(
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(key),
+                                    subtitle: Text(
+                                      aux[key].toString().trim(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                                buildFutureBuilderImage(key),
-                              ],
+                                  buildFutureBuilderImage(key),
+                                ],
+                              ),
                             ),
                           );
                         }),
@@ -107,53 +118,5 @@ class _HomePageState extends State<HomePage> {
         // Text(fetchRandomFromBreed(key)),
       },
     );
-  }
-
-  Future<String> fetchRandom() async {
-    final response =
-        await http.get(Uri.parse('https://dog.ceo/api/breeds/image/random'));
-
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return json.decode(response.body)['message'];
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
-  }
-
-  Future<String> fetchRandomFromBreed(String breed) async {
-    final response = await http
-        .get(Uri.parse('https://dog.ceo/api/breed/$breed/images/random'));
-
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return json.decode(response.body)['message'];
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
-  }
-
-  Future<Map> fetchDogsBreeds() async {
-    final response =
-        await http.get(Uri.parse('https://dog.ceo/api/breeds/list/all'));
-
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      Map<String, dynamic> aux =
-          Map<String, dynamic>.from(json.decode(response.body)['message']);
-      aux.removeWhere((key, value) => value.isEmpty);
-      return aux;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
   }
 }
