@@ -92,31 +92,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  FutureBuilder<String> buildFutureBuilderImage(String key) {
-    return FutureBuilder(
-      future: fetchRandomFromBreed(key),
-      builder: (context, AsyncSnapshot<String> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return CircularProgressIndicator();
-          default:
-            if (snapshot.hasError || snapshot.data == null)
-              return Text('Error: ${snapshot.error}');
-            else {
-              return Flexible(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    snapshot.data!,
-                    fit: BoxFit.scaleDown,
-                  ),
-                ),
-              );
-            }
-        }
-        // Text(fetchRandomFromBreed(key)),
-      },
-    );
-  }
 }
